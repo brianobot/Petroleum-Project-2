@@ -6,6 +6,12 @@ CopyRight @2023 Brian Obot
 https://brianobot.github.io/
 """
 
+# import required modules and functions
+import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
+
+
 # plot original data on graph
 # - figure title
 # - label x coordinate
@@ -23,7 +29,6 @@ https://brianobot.github.io/
 def main():
     """Main entry point to module execution"""
     pass
-
 
 
 if __name__ == "__main__":
