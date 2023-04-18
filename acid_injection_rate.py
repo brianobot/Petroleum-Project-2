@@ -11,9 +11,15 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
+
+filename = "data/acid_mud_injection_rate.csv"
+
+
+data = pd.read_csv(filename, delimiter=",")
+
 def main():
     """Main entry point to module execution"""
-    pass
+    print("Data = ", data)
 
 
 if __name__ == "__main__":

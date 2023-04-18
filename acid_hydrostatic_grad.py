@@ -12,9 +12,14 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 
+filename = "data/acid_hydrostatic_gradient.csv"
+
+data = pd.read_csv(filename, delimiter=",")
+
+
 def main():
     """Main entry point to module execution"""
-    pass
+    print("Data = ", data)
 
 
 if __name__ == "__main__":
