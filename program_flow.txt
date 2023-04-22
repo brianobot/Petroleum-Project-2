@@ -1,0 +1,10 @@
+When Program is Open Display Intro Information
+"""
+Program to analyze Acid Viscosity for different concentration of Acid over a temperature temp_range
+
+Options:
+    Type 1: To Plot Original Viscosity-Temperature graph for all concentration.
+    Type 2: To Generate a regression equation for a specific concenration.
+ 
+Enter Command >>>
+"""
