@@ -2,16 +2,15 @@
 Python Module containing code to manage functions for analysis of acid viscosity
 
 CopyRight @2023 Brian Obot
-
 https://brianobot.github.io/
 """
 
 # import required modules and functions
 import numpy as np
 import pandas as pd
-from scipy.interpolate import interp1d
-from matplotlib import pyplot as plt
 from datetime import datetime
+from matplotlib import pyplot as plt
+from scipy.interpolate import interp1d
 
 # Program Flow 
 # plot original data on graph
@@ -26,6 +25,7 @@ from datetime import datetime
 # use the regression equation to produce a updated graph
 # receive temp and produce corresponding acid viscosity for the stated conc
 
+DATA_POINT = 100 
 
 filename = "data/acid_viscosity.csv"
 
@@ -57,6 +57,22 @@ def plot_original_data():
     plt.show()
 
 
+def obtain_interpolated_functions():
+    # interpolate for the different equations
+    interp_water = interp1d(temp_range, water_visc, kind='quadratic', fill_value='extrapolate')
+    interp_acid5 = interp1d(temp_range, acid_at_5p, kind='quadratic', fill_value='extrapolate')
+    interp_acid10 = interp1d(temp_range, acid_at_10, kind='quadratic', fill_value='extrapolate')
+    interp_acid15 = interp1d(temp_range, acid_at_15, kind='quadratic', fill_value='extrapolate')
+    interp_acid31 = interp1d(temp_range, acid_at_31, kind='quadratic', fill_value='extrapolate')
+
+    return [
+        interp_water,
+        interp_acid5,
+        interp_acid10,
+        interp_acid15,
+        interp_acid31,
+    ]
+
 def generate_regression_values_for_conc(all=False):
     trial = 0
     index = None
@@ -77,16 +93,11 @@ def generate_regression_values_for_conc(all=False):
         print(f"Acid Concentration to be used = {conc}")
         index = options.index(conc)
 
-    # interpolate for the different equations
-    interp_water = interp1d(temp_range, water_visc, kind='quadratic', fill_value='extrapolate')
-    interp_acid5 = interp1d(temp_range, acid_at_5p, kind='quadratic', fill_value='extrapolate')
-    interp_acid10 = interp1d(temp_range, acid_at_10, kind='quadratic', fill_value='extrapolate')
-    interp_acid15 = interp1d(temp_range, acid_at_15, kind='quadratic', fill_value='extrapolate')
-    interp_acid31 = interp1d(temp_range, acid_at_31, kind='quadratic', fill_value='extrapolate')
-
     # obtain new values from interpolated functions for the variables from 0 to 300
-    new_x = np.linspace(0, 300, 100)
+    new_x = np.linspace(0, 300, DATA_POINT)
     
+    interp_water, interp_acid5, interp_acid10, interp_acid15, interp_acid31 = obtain_interpolated_functions()
+
     new_water = interp_water(new_x)
     new_acid_5 = interp_acid5(new_x)
     new_acid_10 = interp_acid10(new_x)
@@ -100,12 +111,14 @@ def plot_new_regression_graph(all=True):
     if all:
         data, _ = generate_regression_values_for_conc(all=True)
     else:
-        data, data_index = generate_regression_values_for_conc()
+        data, data_index = generate_regression_values_for_conc(all=False)
         data = [data[data_index], ]
+
+    temp_range = np.linspace(0, 300, DATA_POINT)
 
     # plot new values
     for index, datum in enumerate(data):
-        plt.plot(temp_range, data[index], marker=",")
+        plt.plot(temp_range, datum, marker=",")
     # prepare graph metadata for original data chart
     plt.title("New Acid Viscosity with Temperature Chart")
     plt.xlabel("Temperature (oF)")
@@ -116,9 +129,20 @@ def plot_new_regression_graph(all=True):
     plt.show()
 
 
+def generate_regression_equation(y, degree=3):
+    # need a range for x
+    # need a range for y
+    # specify a degree for the regression equation
+    x = np.linspace(0, 300, DATA_POINT)
+
+    # get regression
+    y_est = np.polyfit(x, y, degree)
+    return y_est
+
 def main():
     """Main entry point to module execution"""
     intro = f"""
+    TITLE: ACID VISCOSITY-TEMPERATURE ANALYSIS PROGRAM
     ###################################################################
     Program Started Successfully!.              Timestamp:{datetime.now().date()}
     ###################################################################
@@ -150,10 +174,19 @@ def main():
             case "3":
                 plot_new_regression_graph(all=False)
             case "4":
-                data, index = generate_regression_values_for_conc()
-                print(f"Values = {data[index]}")
+                data, data_index = generate_regression_values_for_conc()
+                y = data[data_index]
+                reg_var = generate_regression_equation(y)
+                print("Regression eqn = ", reg_var)
             case "5":
-                pass
+                option = ["5", "10", "15", "31.5"]
+                select = input(f"Select a Concentration. Options => {option}: ")
+                select_index = option.index(select) + 1
+                func = obtain_interpolated_functions()[select_index]
+                value = float(input("Enter a Temperature value: "))
+                print(f"You Entered {value}")
+                result = func(value)
+                print(f"Viscosity Value = {result}")
             case _:
                 print("Invalid Option! Try Again")
     
