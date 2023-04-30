@@ -39,14 +39,22 @@ acid_at_10 = data['10% HCL']
 acid_at_15 = data['15% HCL']
 acid_at_31 = data['31.45% HCL']
 
+LABEL = [
+    "Water",
+    "5% HCl",
+    "10% HCl",
+    "15% HCl",
+    "31.45% HCl",
+]
+
 
 def plot_original_data():
     # prepare plot data for original data
-    plt.plot(temp_range, water_visc, label='water', marker='o')
-    plt.plot(temp_range, acid_at_5p, label='5% Hcl', marker='o')
-    plt.plot(temp_range, acid_at_10, label='10% Hcl', marker='o')
-    plt.plot(temp_range, acid_at_15, label='15% Hcl', marker='o')
-    plt.plot(temp_range, acid_at_31, label='31.45% Hcl', marker='o')
+    plt.plot(temp_range, water_visc, label=LABEL[0], marker='o')
+    plt.plot(temp_range, acid_at_5p, label=LABEL[1], marker='o')
+    plt.plot(temp_range, acid_at_10, label=LABEL[2], marker='o')
+    plt.plot(temp_range, acid_at_15, label=LABEL[3], marker='o')
+    plt.plot(temp_range, acid_at_31, label=LABEL[4], marker='o')
     # prepare graph metadata for original data chart
     plt.title("Acid Viscosity with Temperature Chart")
     plt.xlabel("Temperature (oF)")
@@ -108,17 +116,19 @@ def generate_regression_values_for_conc(all=False):
 
 
 def plot_new_regression_graph(all=True):
+    temp_range = np.linspace(0, 300, DATA_POINT)
+
     if all:
         data, _ = generate_regression_values_for_conc(all=True)
+        # plot new values
+        for index, datum in enumerate(data):
+            plt.plot(temp_range, datum, label=LABEL[index], marker=",")
     else:
         data, data_index = generate_regression_values_for_conc(all=False)
         data = [data[data_index], ]
+        # plot new values
+        plt.plot(temp_range, data[0], label=LABEL[data_index + 1], marker=",")
 
-    temp_range = np.linspace(0, 300, DATA_POINT)
-
-    # plot new values
-    for index, datum in enumerate(data):
-        plt.plot(temp_range, datum, marker=",")
     # prepare graph metadata for original data chart
     plt.title("New Acid Viscosity with Temperature Chart")
     plt.xlabel("Temperature (oF)")
