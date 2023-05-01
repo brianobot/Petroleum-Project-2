@@ -1,4 +1,4 @@
-# required libraries to run the script 
+# required libraries to run the script locally
 numpy
 pandas
 matplotlib
