@@ -1,4 +1,5 @@
 # required libraries/packages to run the script locally
 numpy
 pandas
+scipy
 matplotlib
